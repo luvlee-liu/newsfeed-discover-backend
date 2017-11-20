@@ -22,7 +22,7 @@ def import_content(filepath):
     
     for doc in data_json:
         doc['author'] = ObjectId("59ffc40d8e5c716e040a31d6") # publisher id
-        doc['tagList'] = [doc['category']]
+        doc['tagList'] = [doc['category'],doc['source']]
         doc['slug'] = '-'.join([doc['url'].split('/')[-2], doc['url'].split('/')[-1]])
         doc['comments'] = []
         doc['favoritesCount'] = 0
