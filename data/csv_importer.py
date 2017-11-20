@@ -8,7 +8,7 @@ from bson import ObjectId
 
 def import_content(filepath):
     mng_client = pymongo.MongoClient('localhost', 27017)
-    mng_db = mng_client['conduit'] # Replace mongo db name
+    mng_db = mng_client['newsfeed-discover'] # Replace mongo db name
     collection_name = 'articles' # Replace mongo db collection name
     db_cm = mng_db[collection_name]
     cdir = os.path.dirname(__file__)
@@ -21,7 +21,7 @@ def import_content(filepath):
     db_cm.remove()
     
     for doc in data_json:
-        doc['author'] = ObjectId("59ffc40d8e5c716e040a31d6") # publisher id
+        doc['author'] = ObjectId("5a1260055ccfdc03aab88a42") # publisher id
         doc['tagList'] = [doc['category'],doc['source']]
         doc['slug'] = '-'.join([doc['url'].split('/')[-2], doc['url'].split('/')[-1]])
         doc['comments'] = []

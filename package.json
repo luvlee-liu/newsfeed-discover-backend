@@ -1,7 +1,7 @@
 {
-  "name": "conduit-node",
+  "name": "newsfeed-discover",
   "version": "1.0.0",
-  "description": "conduit on node",
+  "description": "newsfeed discover",
   "main": "app.js",
   "scripts": {
     "start": "node ./app.js",
