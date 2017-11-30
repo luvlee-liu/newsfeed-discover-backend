@@ -11,6 +11,7 @@ var UserSchema = new mongoose.Schema({
   image: String,
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  favoritesTagList: [{ type: Number }],
   hash: String,
   salt: String
 }, {timestamps: true});
@@ -58,16 +59,18 @@ UserSchema.methods.toProfileJSONFor = function(user){
   };
 };
 
-UserSchema.methods.favorite = function(id){
+UserSchema.methods.favorite = function(id, topicId){
   if(this.favorites.indexOf(id) === -1){
     this.favorites.push(id);
+    this.favoritesTagList.push(topicId);
   }
 
   return this.save();
 };
 
-UserSchema.methods.unfavorite = function(id){
+UserSchema.methods.unfavorite = function(id, topicId){
   this.favorites.remove(id);
+  this.favoritesTagList.splice(this.favoritesTagList.indexOf(topicId), 1);
   return this.save();
 };
 

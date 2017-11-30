@@ -11,6 +11,7 @@ var ArticleSchema = new mongoose.Schema({
   favoritesCount: {type: Number, default: 0},
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
   tagList: [{ type: String }],
+  topic_id: Number,
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   urlToImage: { type: String },
   url: { type: String },

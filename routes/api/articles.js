@@ -102,12 +102,13 @@ router.get('/feed', auth.required, function(req, res, next) {
     if (!user) { return res.sendStatus(401); }
 
     Promise.all([
-      Article.find({ author: {$in: user.following}})
+      Article.find({ topic_id: {$in: user.favoritesTagList}})
         .limit(Number(limit))
         .skip(Number(offset))
+        .sort({createdAt: 'desc'})
         .populate('author')
         .exec(),
-      Article.count({ author: {$in: user.following}})
+      Article.count({ topic_id: {$in: user.favoritesTagList}})
     ]).then(function(results){
       var articles = results[0];
       var articlesCount = results[1];
@@ -122,6 +123,42 @@ router.get('/feed', auth.required, function(req, res, next) {
   });
 });
 
+// router.get('/feed', auth.required, function(req, res, next) {
+//   var limit = 20;
+//   var offset = 0;
+
+//   if(typeof req.query.limit !== 'undefined'){
+//     limit = req.query.limit;
+//   }
+
+//   if(typeof req.query.offset !== 'undefined'){
+//     offset = req.query.offset;
+//   }
+
+//   User.findById(req.payload.id).then(function(user){
+//     if (!user) { return res.sendStatus(401); }
+//     console.log(user.favorites);
+//     Promise.all([
+//       Article.find({ author: {$in: user.following}})
+//         .limit(Number(limit))
+//         .skip(Number(offset))
+//         .populate('author')
+//         .exec(),
+//       Article.count({ author: {$in: user.following}})
+//     ]).then(function(results){
+//       var articles = results[0];
+//       var articlesCount = results[1];
+
+//       return res.json({
+//         articles: articles.map(function(article){
+//           return article.toJSONFor(user);
+//         }),
+//         articlesCount: articlesCount
+//       });
+//     }).catch(next);
+//   });
+// });
+
 router.post('/', auth.required, function(req, res, next) {
   User.findById(req.payload.id).then(function(user){
     if (!user) { return res.sendStatus(401); }
@@ -131,7 +168,6 @@ router.post('/', auth.required, function(req, res, next) {
     article.author = user;
 
     return article.save().then(function(){
-      console.log(article.author);
       return res.json({article: article.toJSONFor(user)});
     });
   }).catch(next);
@@ -196,13 +232,14 @@ router.delete('/:article', auth.required, function(req, res, next) {
 // Favorite an article
 router.post('/:article/favorite', auth.required, function(req, res, next) {
   var articleId = req.article._id;
-
-  User.findById(req.payload.id).then(function(user){
-    if (!user) { return res.sendStatus(401); }
-
-    return user.favorite(articleId).then(function(){
-      return req.article.updateFavoriteCount().then(function(article){
-        return res.json({article: article.toJSONFor(user)});
+  Article.findById(articleId).then(function(article){
+    User.findById(req.payload.id).then(function(user){
+      if (!user || !article) { return res.sendStatus(401); }
+  
+      return user.favorite(articleId, article.topic_id).then(function(){
+        return req.article.updateFavoriteCount().then(function(article){
+          return res.json({article: article.toJSONFor(user)});
+        });
       });
     });
   }).catch(next);
@@ -211,13 +248,14 @@ router.post('/:article/favorite', auth.required, function(req, res, next) {
 // Unfavorite an article
 router.delete('/:article/favorite', auth.required, function(req, res, next) {
   var articleId = req.article._id;
-
-  User.findById(req.payload.id).then(function (user){
-    if (!user) { return res.sendStatus(401); }
-
-    return user.unfavorite(articleId).then(function(){
-      return req.article.updateFavoriteCount().then(function(article){
-        return res.json({article: article.toJSONFor(user)});
+  Article.findById(articleId).then(function(article){
+    User.findById(req.payload.id).then(function (user){
+      if (!user || !article) { return res.sendStatus(401); }
+  
+      return user.unfavorite(articleId, article.topic_id).then(function(){
+        return req.article.updateFavoriteCount().then(function(article){
+          return res.json({article: article.toJSONFor(user)});
+        });
       });
     });
   }).catch(next);

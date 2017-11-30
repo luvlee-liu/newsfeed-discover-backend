@@ -34,7 +34,7 @@ def import_content(filepath):
                 tag_list.append(token)
         tag_list.append(doc['category'])
         tag_list.append(doc['source'])
-        tag_list.append('Topic' + str(doc['topic_id']))
+        # tag_list.append('Topic' + str(doc['topic_id']))
         doc['tagList'] = list(set(tag_list))
 
         doc['slug'] = '-'.join([doc['url'].split('/')[-2], doc['url'].split('/')[-1]])
