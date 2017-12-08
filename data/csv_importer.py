@@ -9,7 +9,8 @@ from bson import ObjectId
 CLEAR_DB = True
 
 def import_content(filepath):
-    mng_client = pymongo.MongoClient('localhost', 27017)
+    uri = "mongodb://localhost:27017"
+    mng_client = pymongo.MongoClient(uri)
     mng_db = mng_client['newsfeed-discover'] # Replace mongo db name
     collection_name = 'articles' # Replace mongo db collection name
     db_cm = mng_db[collection_name]
