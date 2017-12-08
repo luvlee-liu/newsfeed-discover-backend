@@ -37,8 +37,8 @@ def import_content(filepath):
         tag_list.append(doc['source'])
         # tag_list.append('Topic' + str(doc['topic_id']))
         doc['tagList'] = list(set(tag_list))
-
-        doc['slug'] = '-'.join([doc['url'].split('/')[-2], doc['url'].split('/')[-1]])
+        url_tokens = list(filter(None, doc['url'].split('/')))
+        doc['slug'] = '-'.join([url_tokens[-2], url_tokens[-1]])
         doc['comments'] = []
         doc['favoritesCount'] = 0
         doc['_v'] = 0
